@@ -1,4 +1,4 @@
-package avalon
+package server
 
 type JsendResponse struct {
 	Success string `json:"Success"`
