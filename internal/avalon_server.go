@@ -3,6 +3,8 @@ package avalon
 import (
 	"encoding/json"
 	"log"
+	"os"
+	"fmt"
 	"net/http"
 )
 
@@ -51,5 +53,5 @@ func (s AvalonServer) Run() {
 	staticHandler := http.FileServer(http.Dir("./html"))
 	mux.Handle("/", staticHandler)
 	mux.HandleFunc("/rooms", s.GetRoomsHandler())
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), mux))
 }
