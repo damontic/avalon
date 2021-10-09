@@ -2,10 +2,10 @@ package avalon
 
 import (
 	"encoding/json"
-	"log"
-	"os"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 )
 
 type AvalonServer struct {
@@ -48,10 +48,24 @@ func (s *AvalonServer) CreateRoom(room Room) JsendResponse {
 	}
 }
 
+func (s AvalonServer) redirectTLS(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "https://avalon.xn--davidmontao-beb.com"+r.RequestURI, http.StatusMovedPermanently)
+}
+
 func (s AvalonServer) Run() {
+	log.Fatal(http.ListenAndServe(":80", http.HandlerFunc(s.redirectTLS)))
+
 	mux := http.NewServeMux()
 	staticHandler := http.FileServer(http.Dir("./html"))
 	mux.Handle("/", staticHandler)
 	mux.HandleFunc("/rooms", s.GetRoomsHandler())
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("PORT")), mux))
+
+	log.Fatal(
+		http.ListenAndServeTLS(
+			fmt.Sprintf(":%s", os.Getenv("PORT")),
+			os.Getenv("CERTFILE"),
+			os.Getenv("KEYFILE"),
+			mux,
+		),
+	)
 }
