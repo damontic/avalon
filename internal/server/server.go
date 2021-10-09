@@ -67,7 +67,7 @@ func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, ss
 
 func (s AvalonServer) Run() {
 	mux := http.NewServeMux()
-	staticHandler := http.FileServer(http.Dir("./assets/html"))
+	staticHandler := http.FileServer(http.Dir("./assets"))
 	mux.Handle("/", staticHandler)
 	mux.HandleFunc("/rooms", s.getRoomsHandler())
 
