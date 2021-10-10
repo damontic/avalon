@@ -1,5 +1,5 @@
 class Avalon {
-    constructor(width, height, params, font, titleImage){
+    constructor(width, height, params){
         this.room = params.room ? params.room : null
         this.width = width
         this.height = height
@@ -7,10 +7,9 @@ class Avalon {
         this.right_margin = 10
         this.upper_margin = 10
         this.lower_margin = 10
-        this.font = font
         this.state = "menu"
 
-        this.title = new AvalonImage(titleImage, this.left_margin, this.upper_margin)
+        this.title = new AvalonImage(IMAGE_TITLE, this.left_margin, this.upper_margin)
 
         this.menu = new AvalonMenu(
             this,

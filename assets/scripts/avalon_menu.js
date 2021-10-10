@@ -21,6 +21,7 @@ class AvalonMenu {
             'Create Game!',
             this.avalon.left_margin,
             this.avalon.upper_margin + this.avalon.title.height,
+            FONT_INCONSOLATA
         )
     }
     draw() {

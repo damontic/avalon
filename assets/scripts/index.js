@@ -1,6 +1,9 @@
 let avalon
-let font
-let titleImage
+
+let FONT_INCONSOLATA
+
+let IMAGE_TITLE
+
 let RED
 let GREEN
 let BLUE
@@ -11,9 +14,9 @@ let BLACK
 let WHITE
 
 function preload() {
-    font = loadFont('fonts/InconsolataN-Regular.otf')
+    FONT_INCONSOLATA = loadFont('fonts/InconsolataN-Regular.otf')
 
-    titleImage = loadImage("images/text/title.png")
+    IMAGE_TITLE = loadImage("images/text/title.png")
 
     RED = color(255, 0, 0)
     GREEN = color(0, 255, 0)
@@ -36,9 +39,7 @@ function setup() {
     avalon = new Avalon(
         appDisplayWidth,
         appDisplayHeight,
-        getURLParams(),
-        font,
-        titleImage
+        getURLParams()
     )
 }
 
