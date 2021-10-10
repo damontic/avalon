@@ -8,8 +8,10 @@ class Avalon {
         this.upper_margin = 10
         this.lower_margin = 10
         this.state = "menu"
+        // backgrounds from farthest to closer
+        this.background_zs = [-500]
 
-        this.title = new AvalonImage(IMAGE_TITLE, this.left_margin, this.upper_margin)
+        this.title = new AvalonImage(this, IMAGE_TITLE, this.left_margin, this.upper_margin)
 
         this.menu = new AvalonMenu(
             this,
@@ -22,6 +24,8 @@ class Avalon {
         this.room_waiting = new AvalonRoomWaiting(this)
         this.avalon_team_discussion = new AvalonTeamDiscussion(this)
         this.avalon_quest = new AvalonQuest(this)
+
+        this.merlin_card = new AvalonCard(IMAGE_MERLIN, IMAGE_CHARACTER_CARD_BACK, 0, 0)
     }
     draw() {
         background(BLACK)
@@ -53,6 +57,8 @@ class Avalon {
                 this.state = "menu"
                 break
         }
+
+        this.merlin_card.draw()
         pop()
     }
 }

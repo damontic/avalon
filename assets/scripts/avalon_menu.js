@@ -26,6 +26,7 @@ class AvalonMenu {
     }
     draw() {
         push()
+        translate(0,0,this.avalon.background_zs[0])
         this.roomsTable.draw()
         this.createRoomButton.draw()
         pop()

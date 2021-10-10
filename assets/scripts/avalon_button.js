@@ -29,4 +29,22 @@ class AvalonButton {
         text(this.text, this.x, this.y)
         pop()
     }
+    isOverElement() {
+        if (
+            mouseX > bx - boxSize &&
+            mouseX < bx + boxSize &&
+            mouseY > by - boxSize &&
+            mouseY < by + boxSize
+          ) {
+            overBox = true;
+            if (!locked) {
+              stroke(255);
+              fill(244, 122, 158);
+            }
+          } else {
+            stroke(156, 39, 176);
+            fill(244, 122, 158);
+            overBox = false;
+          }
+    }
 }
