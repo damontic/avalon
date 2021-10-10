@@ -1,18 +1,44 @@
-let avalon;
+let avalon
+let font
+let titleImage
+let RED
+let GREEN
+let BLUE
+let YELLOW
+let BLACK
+
+function preload() {
+    font = loadFont('fonts/InconsolataN-Regular.otf')
+    titleImage = loadImage("images/text/title.png")
+    RED = color(255, 0, 0)
+    GREEN = color(0, 255, 0)
+    BLUE = color(0, 0, 255)
+    YELLOW = color(255, 255, 0)
+    BLACK = color(0)
+    WHITE = color(255)
+}
 
 function setup() {
-    createCanvas(800, 600, WEBGL);
-    ortho();
-    angleMode(RADIANS);
-    rectMode(CORNER);
-    imageMode(CORNER);
-    avalon = new Avalon();
+    let appDisplayWidth = displayWidth * 80 / 100
+    let appDisplayHeight = displayHeight * 80 / 100
+    createCanvas(appDisplayWidth, appDisplayHeight, WEBGL)
+    ortho()
+    angleMode(RADIANS)
+    rectMode(CORNER)
+    textAlign(LEFT, TOP)
+    avalon = new Avalon(
+        appDisplayWidth,
+        appDisplayHeight,
+        getURLParams(),
+        font,
+        titleImage
+    )
 }
 
 function draw() {
-    avalon.draw();
+    avalon.draw()
 }
 
-function mouseClicked() {
-    console.log(`Mouse clicked! [${mouseX}, ${mouseY}]`);
+function mousePressed() {
+    console.log(`${mouseX} ${mouseY} ${avalon.menu.createRoomButton.bbox.x} ${avalon.menu.createRoomButton.bbox.y}`)
 }
