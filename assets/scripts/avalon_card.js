@@ -1,4 +1,4 @@
-class Card {
+class AvalonCard {
     constructor(frontFilepath, backFilepath, x, y){
         this.front = loadImage(frontFilepath);
         this.back = loadImage(backFilepath);
