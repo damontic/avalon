@@ -1,75 +1,48 @@
 package server
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/damontic/avalon/internal/server/handlers"
 )
 
 type AvalonServer struct {
-	Rooms                []Room
-	maxNumberRooms       int
 	port                 int
 	isSsl                bool
 	isHttpToHttpsEnabled bool
 	sslCert              string
 	sslKey               string
 	domain               string
-}
-
-func (s AvalonServer) getRoomsHandler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			json.NewEncoder(w).Encode(s)
-		}
-
-		if r.Method == http.MethodPost {
-			decoder := json.NewDecoder(r.Body)
-			var room Room
-			err := decoder.Decode(&room)
-			if err != nil {
-				panic(err)
-			}
-			result := s.createRoom(room)
-			json.NewEncoder(w).Encode(result)
-		}
-	}
-}
-
-func (s *AvalonServer) createRoom(room Room) JsendResponse {
-	s.Rooms = append(s.Rooms, room)
-	return JsendResponse{
-		"",
-		"",
-		"",
-		0,
-	}
-}
-
-func (s AvalonServer) redirectTLS(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(
-		w,
-		r,
-		fmt.Sprintf("https://%s%s", s.domain, r.RequestURI),
-		http.StatusMovedPermanently,
-	)
+	handlers             map[string]http.Handler
 }
 
 func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, sslCert string, sslKey string, isHttpToHttpsEnabled bool) *AvalonServer {
-	avalon_server := new(AvalonServer)
-	avalon_server.isSsl = isSsl
-	avalon_server.isHttpToHttpsEnabled = isHttpToHttpsEnabled
-	avalon_server.port = port
-	avalon_server.maxNumberRooms = maxNumberRooms
-	return avalon_server
+	roomHandler := handlers.NewRoomsHandler()
+	handlersMap := map[string]http.Handler{
+		"/rooms/": handlers.DispatchHttpMethod(roomHandler),
+		"/rooms":  handlers.DispatchHttpMethod(roomHandler),
+	}
+	return &AvalonServer{
+		port:                 port,
+		isSsl:                isSsl,
+		isHttpToHttpsEnabled: isHttpToHttpsEnabled,
+		sslCert:              sslCert,
+		sslKey:               sslKey,
+		domain:               domain,
+		handlers:             handlersMap,
+	}
 }
 
 func (s AvalonServer) Run() {
 	mux := http.NewServeMux()
 	staticHandler := http.FileServer(http.Dir("./assets"))
 	mux.Handle("/", staticHandler)
-	mux.HandleFunc("/rooms", s.getRoomsHandler())
+
+	for key, value := range s.handlers {
+		mux.Handle(key, value)
+	}
 
 	if s.isSsl {
 		log.Fatal(
@@ -87,4 +60,13 @@ func (s AvalonServer) Run() {
 	if s.isHttpToHttpsEnabled && s.port != 80 {
 		log.Fatal(http.ListenAndServe(":80", http.HandlerFunc(s.redirectTLS)))
 	}
+}
+
+func (s AvalonServer) redirectTLS(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(
+		w,
+		r,
+		fmt.Sprintf("https://%s%s", s.domain, r.RequestURI),
+		http.StatusMovedPermanently,
+	)
 }
