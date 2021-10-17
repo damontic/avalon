@@ -1,7 +1,7 @@
 SHELL=/bin/bash
-.PHONY: all run build test version prerelease patch minor major clean
+.PHONY: all help run build test version prerelease patch minor major clean
 
-all: publish
+all: build
 
 help:
 	go run main.go -h
