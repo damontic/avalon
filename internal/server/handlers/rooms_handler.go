@@ -53,7 +53,7 @@ func (rh RoomsHandler) delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func (rh *RoomsHandler) createRoom(room server.Room) JsendResponse {
-	if _, ok := rh.Rooms[room.Id]; !ok {
+	if _, ok := rh.Rooms[room.Id]; ok {
 		return JsendResponse{
 			Success: false,
 			Error:   fmt.Sprintf("A room with id %d already exists.", room.Id),

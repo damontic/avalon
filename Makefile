@@ -3,8 +3,11 @@ SHELL=/bin/bash
 
 all: publish
 
+help:
+	go run main.go -h
+
 run:
-	go run main.go --port=8080
+	go run main.go -port 8080
 
 build:
 	go build -o avalon

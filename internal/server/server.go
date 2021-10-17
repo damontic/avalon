@@ -21,8 +21,8 @@ type AvalonServer struct {
 	logger               logger.Logger
 }
 
-func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, sslCert string, sslKey string, isHttpToHttpsEnabled bool, verbosity int) *AvalonServer {
-	avalonLogger, err := logger.New(logger.VerbosityLevel(verbosity))
+func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, sslCert string, sslKey string, isHttpToHttpsEnabled bool, verbosity int, useUtc bool) *AvalonServer {
+	avalonLogger, err := logger.New(logger.VerbosityLevel(verbosity), useUtc)
 	if err != nil {
 		log.Fatalln("Could not create the AvalonServer logger.")
 	}

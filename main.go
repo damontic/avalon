@@ -7,17 +7,18 @@ import (
 )
 
 func main() {
-	port := flag.Int("port", 80, "port to bind to")
-	maxNumberRooms := flag.Int("rooms", 80, "port to bind to")
-	isSsl := flag.Bool("ssl", false, "specifies the max number of rooms")
-	isHttpToHttpsEnabled := flag.Bool("httpsredirect", false, "enables 80 to 443 redirect")
-	domain := flag.String("domain", "avalon.davidmontaño.com", "domain tied to this app")
-	sslCert := flag.String("cert", "cert.pem", "domain tied to this app")
-	sslKey := flag.String("key", "privkey.pem", "domain tied to this app")
-	verbosity := flag.String("verbosity", "vvvv", "verbosity level from empty up to vvvvvv. INFO by default vvvv")
+	port := flag.Int("port", 80, "port to bind to.")
+	maxNumberRooms := flag.Int("rooms", 10, "port to bind to.")
+	isSsl := flag.Bool("ssl", false, "specifies the max number of rooms.")
+	isHttpToHttpsEnabled := flag.Bool("httpsredirect", false, "enables 80 to 443 redirect.")
+	domain := flag.String("domain", "avalon.davidmontaño.com", "domain tied to this app.")
+	sslCert := flag.String("cert", "cert.pem", "domain tied to this app.")
+	sslKey := flag.String("key", "privkey.pem", "domain tied to this app.")
+	verbosity := flag.String("verbosity", "vvvv", "verbosity level from empty up to vvvvvv.")
+	utc := flag.Bool("utc", false, "either use UTC for log time or not.")
 	flag.Parse()
 
 	verbosityLevel := len(*verbosity)
-	server := avalon_server.NewAvalonServer(*maxNumberRooms, *port, *isSsl, *domain, *sslCert, *sslKey, *isHttpToHttpsEnabled, verbosityLevel)
+	server := avalon_server.NewAvalonServer(*maxNumberRooms, *port, *isSsl, *domain, *sslCert, *sslKey, *isHttpToHttpsEnabled, verbosityLevel, *utc)
 	server.Run()
 }

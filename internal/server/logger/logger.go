@@ -24,21 +24,23 @@ type Logger struct {
 	Level  VerbosityLevel
 	logger *log.Logger
 	buffer *bytes.Buffer
+	useUtc bool
 }
 
 type logEvent struct {
+	Date    string `json:"date"`
 	Level   string `json:"level"`
-	Utc     string `json:"utc"`
 	Message string `json:"message"`
 }
 
-func New(level VerbosityLevel) (*Logger, error) {
+func New(level VerbosityLevel, useUtc bool) (*Logger, error) {
 	var buf bytes.Buffer
 	logger := log.New(&buf, "", log.Lmsgprefix)
 	return &Logger{
 		Level:  level,
 		logger: logger,
 		buffer: &buf,
+		useUtc: useUtc,
 	}, nil
 }
 
@@ -62,12 +64,17 @@ func (l Logger) print(level VerbosityLevel, message string) error {
 	if l.Level < level {
 		return nil
 	}
-	t := time.Now().UTC().Format(time.RFC3339)
+	var t string
+	if l.useUtc {
+		t = time.Now().UTC().Format(time.RFC3339)
+	} else {
+		t = time.Now().Format(time.RFC3339)
+	}
 
 	levelName := getLoggerName(level)
 	logEvent := logEvent{
 		Level:   levelName,
-		Utc:     t,
+		Date:    t,
 		Message: message,
 	}
 	b, err := json.Marshal(logEvent)
