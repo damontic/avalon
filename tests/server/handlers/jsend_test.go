@@ -3,17 +3,17 @@ package tests
 import (
 	"fmt"
 
-	"github.com/damontic/avalon/internal/server/handlers"
+	"github.com/damontic/avalon/internal/server/jsend"
 )
 
 func ExampleJsendResponse() {
-	resp := handlers.JsendResponse{
+	resp := jsend.JsendResponse{
 		Success: true,
 		Data:    1,
 	}
 	fmt.Printf("%s\n", resp)
 
-	resp = handlers.JsendResponse{
+	resp = jsend.JsendResponse{
 		Success: false,
 		Error:   "Bad thing happened",
 	}

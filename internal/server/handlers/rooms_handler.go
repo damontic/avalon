@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/damontic/avalon/internal/domain/server"
+	"github.com/damontic/avalon/internal/server/jsend"
 	"github.com/damontic/avalon/internal/server/logger"
 )
 
@@ -48,33 +49,23 @@ func (rh *RoomsHandler) post(w http.ResponseWriter, r *http.Request) {
 
 func (rh RoomsHandler) put(w http.ResponseWriter, r *http.Request) {
 	rh.avalonLogger.Debug("handlers.rooms_handler.put", "Not implemented yet.")
-	result := JsendResponse{
-		Success: false,
-		Error:   "Not implemented: handlers.rooms_handler.put",
-	}
+	result := jsend.NewJsendResponseFailure("Not implemented: handlers.rooms_handler.put")
 	json.NewEncoder(w).Encode(result)
 }
 
 func (rh RoomsHandler) delete(w http.ResponseWriter, r *http.Request) {
 	rh.avalonLogger.Debug("handlers.rooms_handler.delete", "Not implemented yet.")
-	result := JsendResponse{
-		Success: false,
-		Error:   "Not implemented: handlers.rooms_handler.delete",
-	}
+	result := jsend.NewJsendResponseFailure("Not implemented: handlers.rooms_handler.delete")
 	json.NewEncoder(w).Encode(result)
 }
 
-func (rh *RoomsHandler) createRoom(room server.Room) JsendResponse {
+func (rh *RoomsHandler) createRoom(room server.Room) jsend.JsendResponse {
 	if _, ok := rh.Rooms[room.Id]; ok {
-		return JsendResponse{
-			Success: false,
-			Error:   fmt.Sprintf("A room with id %d already exists.", room.Id),
-		}
+		message := fmt.Sprintf("A room with id %d already exists.", room.Id)
+		return jsend.NewJsendResponseFailure(message)
 	}
 	rh.Rooms[room.Id] = room
-	return JsendResponse{
-		Success: true,
-	}
+	return jsend.NewJsendResponseSuccess()
 }
 
 func NewRoomsHandler(logger *logger.Logger, maxNumberRooms int) *RoomsHandler {

@@ -89,7 +89,7 @@ function mousePressed() {
 function mouseDragged() {
     console.log("Mouse Dragged")
   }
-  
+
   function mouseReleased() {
     console.log("Mouse Released")
   }
