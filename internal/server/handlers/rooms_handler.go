@@ -9,9 +9,11 @@ import (
 	"strings"
 
 	"github.com/damontic/avalon/internal/domain/server"
+	"github.com/damontic/avalon/internal/server/logger"
 )
 
 type RoomsHandler struct {
+	avalonLogger   *logger.Logger
 	Rooms          map[int]server.Room `json:"rooms"`
 	MaxNumberRooms int                 `json:"maxNumberRooms"`
 }
@@ -20,7 +22,7 @@ func (rh RoomsHandler) get(w http.ResponseWriter, r *http.Request) {
 	pathAfterRooms := strings.TrimPrefix(r.URL.Path, "/rooms")
 	idString := strings.TrimPrefix(pathAfterRooms, "/")
 	if idString != "" {
-		log.Printf("idString is %s\n", idString)
+		rh.avalonLogger.Debugf("handlers.rooms_handler.get", "idString is %s\n", idString)
 		id, err := strconv.Atoi(idString)
 		if err != nil {
 			log.Printf("%s", err.Error())
@@ -45,11 +47,21 @@ func (rh *RoomsHandler) post(w http.ResponseWriter, r *http.Request) {
 }
 
 func (rh RoomsHandler) put(w http.ResponseWriter, r *http.Request) {
-
+	rh.avalonLogger.Debug("handlers.rooms_handler.put", "Not implemented yet.")
+	result := JsendResponse{
+		Success: false,
+		Error:   "Not implemented: handlers.rooms_handler.put",
+	}
+	json.NewEncoder(w).Encode(result)
 }
 
 func (rh RoomsHandler) delete(w http.ResponseWriter, r *http.Request) {
-
+	rh.avalonLogger.Debug("handlers.rooms_handler.delete", "Not implemented yet.")
+	result := JsendResponse{
+		Success: false,
+		Error:   "Not implemented: handlers.rooms_handler.delete",
+	}
+	json.NewEncoder(w).Encode(result)
 }
 
 func (rh *RoomsHandler) createRoom(room server.Room) JsendResponse {
@@ -57,7 +69,6 @@ func (rh *RoomsHandler) createRoom(room server.Room) JsendResponse {
 		return JsendResponse{
 			Success: false,
 			Error:   fmt.Sprintf("A room with id %d already exists.", room.Id),
-			Code:    1,
 		}
 	}
 	rh.Rooms[room.Id] = room
@@ -66,8 +77,9 @@ func (rh *RoomsHandler) createRoom(room server.Room) JsendResponse {
 	}
 }
 
-func NewRoomsHandler(maxNumberRooms int) *RoomsHandler {
+func NewRoomsHandler(logger *logger.Logger, maxNumberRooms int) *RoomsHandler {
 	return &RoomsHandler{
+		logger,
 		make(map[int]server.Room),
 		maxNumberRooms,
 	}

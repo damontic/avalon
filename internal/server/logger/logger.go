@@ -30,6 +30,7 @@ type Logger struct {
 type logEvent struct {
 	Date    string `json:"date"`
 	Level   string `json:"level"`
+	Source  string `json:"source"`
 	Message string `json:"message"`
 }
 
@@ -44,23 +45,54 @@ func New(level VerbosityLevel, useUtc bool) (*Logger, error) {
 	}, nil
 }
 
-func (l Logger) Info(message string) {
-	l.print(INFO, message)
+func (l Logger) Debug(source string, message string) {
+	l.print(DEBUG, source, message)
 }
 
-func (l Logger) Warn(message string) {
-	l.print(WARN, message)
+func (l Logger) Debugf(source string, format string, params ...interface{}) {
+	message := fmt.Sprintf(format, params...)
+	l.print(DEBUG, source, message)
 }
 
-func (l Logger) Error(message string) {
-	l.print(ERROR, message)
+func (l Logger) Info(source string, message string) {
+	l.print(INFO, source, message)
 }
 
-func (l Logger) Fatal(message string) {
-	l.print(FATAL, message)
+func (l Logger) Infof(source string, format string, params ...interface{}) {
+	message := fmt.Sprintf(format, params...)
+	l.print(INFO, source, message)
 }
 
-func (l Logger) print(level VerbosityLevel, message string) error {
+func (l Logger) Warn(source string, message string) {
+	l.print(WARN, source, message)
+}
+
+func (l Logger) Warnf(source string, format string, params ...interface{}) {
+	message := fmt.Sprintf(format, params...)
+	l.print(WARN, source, message)
+}
+
+func (l Logger) Error(source string, message string) {
+	l.print(ERROR, source, message)
+}
+
+func (l Logger) Errorf(source string, format string, params ...interface{}) {
+	message := fmt.Sprintf(format, params...)
+	l.print(ERROR, source, message)
+}
+
+func (l Logger) Fatal(source string, message string) {
+	l.print(FATAL, source, message)
+	panic(message)
+}
+
+func (l Logger) Fatalf(source string, format string, params ...interface{}) {
+	message := fmt.Sprintf(format, params...)
+	l.print(FATAL, source, message)
+	panic(message)
+}
+
+func (l Logger) print(level VerbosityLevel, source string, message string) error {
 	if l.Level < level {
 		return nil
 	}
@@ -75,6 +107,7 @@ func (l Logger) print(level VerbosityLevel, message string) error {
 	logEvent := logEvent{
 		Level:   levelName,
 		Date:    t,
+		Source:  source,
 		Message: message,
 	}
 	b, err := json.Marshal(logEvent)
@@ -83,6 +116,7 @@ func (l Logger) print(level VerbosityLevel, message string) error {
 	}
 	l.logger.Printf(string(b[:]))
 	fmt.Print(l.buffer)
+	l.buffer.Reset()
 	return nil
 }
 

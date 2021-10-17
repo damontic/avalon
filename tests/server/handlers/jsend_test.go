@@ -15,11 +15,10 @@ func ExampleJsendResponse() {
 
 	resp = handlers.JsendResponse{
 		Success: false,
-		Code:    12,
 		Error:   "Bad thing happened",
 	}
 	fmt.Printf("%s", resp)
 	// Output:
 	// {"success":true,"data":1}
-	// {"success":false,"error":"Bad thing happened","code":12}
+	// {"success":false,"error":"Bad thing happened"}
 }

@@ -18,7 +18,7 @@ type AvalonServer struct {
 	SslKey               string `json:"sslKey"`
 	Domain               string `json:"domain"`
 	handlers             map[string]http.Handler
-	logger               logger.Logger
+	logger               *logger.Logger
 }
 
 func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, sslCert string, sslKey string, isHttpToHttpsEnabled bool, verbosity int, useUtc bool) *AvalonServer {
@@ -26,10 +26,12 @@ func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, ss
 	if err != nil {
 		log.Fatalln("Could not create the AvalonServer logger.")
 	}
-	roomHandler := handlers.NewRoomsHandler(maxNumberRooms)
+	metricsHandler := handlers.NewMetricsHandler(avalonLogger)
+	roomHandler := handlers.NewRoomsHandler(avalonLogger, maxNumberRooms)
 	handlersMap := map[string]http.Handler{
-		"/rooms/": handlers.DispatchHttpMethod(roomHandler),
-		"/rooms":  handlers.DispatchHttpMethod(roomHandler),
+		"/metrics": handlers.DispatchHttpMethod(metricsHandler),
+		"/rooms/":  handlers.DispatchHttpMethod(roomHandler),
+		"/rooms":   handlers.DispatchHttpMethod(roomHandler),
 	}
 	return &AvalonServer{
 		Port:                 port,
@@ -39,7 +41,7 @@ func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, ss
 		SslKey:               sslKey,
 		Domain:               domain,
 		handlers:             handlersMap,
-		logger:               *avalonLogger,
+		logger:               avalonLogger,
 	}
 }
 
@@ -52,7 +54,7 @@ func (s AvalonServer) Run() {
 		mux.Handle(key, value)
 	}
 
-	s.logger.Info("Started")
+	s.logger.Info("server.server.Run", "Started")
 
 	if s.IsSsl {
 		log.Fatal(
