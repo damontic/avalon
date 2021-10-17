@@ -14,8 +14,10 @@ func main() {
 	domain := flag.String("domain", "avalon.davidmontaño.com", "domain tied to this app")
 	sslCert := flag.String("cert", "cert.pem", "domain tied to this app")
 	sslKey := flag.String("key", "privkey.pem", "domain tied to this app")
+	verbosity := flag.String("verbosity", "vvvv", "verbosity level from empty up to vvvvvv. INFO by default vvvv")
 	flag.Parse()
 
-	server := avalon_server.NewAvalonServer(*maxNumberRooms, *port, *isSsl, *domain, *sslCert, *sslKey, *isHttpToHttpsEnabled)
+	verbosityLevel := len(*verbosity)
+	server := avalon_server.NewAvalonServer(*maxNumberRooms, *port, *isSsl, *domain, *sslCert, *sslKey, *isHttpToHttpsEnabled, verbosityLevel)
 	server.Run()
 }

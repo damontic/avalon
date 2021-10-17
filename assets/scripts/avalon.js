@@ -26,6 +26,7 @@ class Avalon {
         this.avalon_quest = new AvalonQuest(this)
 
         this.merlin_card = new AvalonCard(IMAGE_MERLIN, IMAGE_CHARACTER_CARD_BACK, 0, 0)
+        this.morgana_card = new AvalonCard(IMAGE_MORGANA, IMAGE_CHARACTER_CARD_BACK, 150, 0)
     }
     draw() {
         background(BLACK)
@@ -59,6 +60,7 @@ class Avalon {
         }
 
         this.merlin_card.draw()
+        this.morgana_card.draw()
         pop()
     }
 }

@@ -66,9 +66,9 @@ func (rh *RoomsHandler) createRoom(room server.Room) JsendResponse {
 	}
 }
 
-func NewRoomsHandler() *RoomsHandler {
+func NewRoomsHandler(maxNumberRooms int) *RoomsHandler {
 	return &RoomsHandler{
-		make(map[int]server.Room, 0),
-		10,
+		make(map[int]server.Room),
+		maxNumberRooms,
 	}
 }

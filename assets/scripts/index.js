@@ -78,6 +78,7 @@ function draw() {
 function mouseClicked() {
     console.log("Mouse Clicked")
     avalon.merlin_card.checkBeingClicked()
+    avalon.morgana_card.checkBeingClicked()
 }
 
 function mousePressed() {

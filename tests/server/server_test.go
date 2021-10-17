@@ -1,14 +1,14 @@
 package tests
 
 import (
-	"testing"
+	"fmt"
 
 	avalon "github.com/damontic/avalon/internal/server"
 )
 
-func TestNewAvalonServer(t *testing.T) {
+func ExampleAvalonServer() {
 	server := avalon.NewAvalonServer(10, 80, false, "", "", "", false)
-	if len(server.Rooms) != 0 {
-		t.Fatalf("Expected Number of Rooms is 0, got: %d", len(server.Rooms))
-	}
+	fmt.Printf("%s", server)
+	// Output:
+	// {"port":80,"isSsl":false,"isHttpToHttpsEnabled":false,"sslCert":"","sslKey":"","domain":""}
 }

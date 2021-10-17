@@ -12,6 +12,7 @@ build:
 
 test:
 	go test github.com/damontic/avalon/tests/server
+	go test github.com/damontic/avalon/tests/server/handlers
 
 version:
 	@cat version
