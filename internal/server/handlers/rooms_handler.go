@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,37 +12,56 @@ import (
 )
 
 type RoomsHandler struct {
-	avalonLogger   *logger.Logger
-	Rooms          map[int]server.Room `json:"rooms"`
-	MaxNumberRooms int                 `json:"maxNumberRooms"`
+	avalonLogger *logger.Logger
+	avalonState  *server.State
 }
 
 func (rh *RoomsHandler) get(w http.ResponseWriter, r *http.Request) {
+	rh.avalonLogger.Debug("handlers.rooms_handler.get", "start")
+	var result interface{}
+	var err error
 	pathAfterRooms := strings.TrimPrefix(r.URL.Path, "/rooms")
 	idString := strings.TrimPrefix(pathAfterRooms, "/")
 	if idString != "" {
-		rh.avalonLogger.Debugf("handlers.rooms_handler.get", "idString is %s\n", idString)
+		rh.avalonLogger.Debugf("handlers.rooms_handler.get", "idString is: %s", idString)
 		id, err := strconv.Atoi(idString)
 		if err != nil {
-			log.Printf("%s", err.Error())
+			rh.avalonLogger.Errorf("handlers.rooms_handler.get", "%s", err.Error())
 			return
 		}
-		json.NewEncoder(w).Encode(rh.Rooms[id])
+		result = rh.avalonState.Rooms[id]
+	} else {
+		rh.avalonLogger.Debug("handlers.rooms_handler.get", "idString is empty")
+		result = rh.avalonState.Rooms
+	}
+	response, err := json.Marshal(jsend.NewJsendResponseSuccessData(result))
+	if err != nil {
+		rh.avalonLogger.Errorf("handlers.rooms_handler.get", "%s", err.Error())
 		return
 	}
-	json.NewEncoder(w).Encode(rh.Rooms)
+	w.Write(response)
 }
 
 func (rh *RoomsHandler) post(w http.ResponseWriter, r *http.Request) {
+	rh.avalonLogger.Debug("handlers.rooms_handler.post", "start")
 	decoder := json.NewDecoder(r.Body)
 	var room server.Room
 	err := decoder.Decode(&room)
 	if err != nil {
-		panic(err)
+		rh.avalonLogger.Errorf("handlers.rooms_handler.post", "%s", err.Error())
+		return
 	}
-	result := rh.createRoom(room)
-	log.Printf("%v\n", rh)
-	json.NewEncoder(w).Encode(result)
+	err = rh.avalonState.CreateRoom(room)
+	if err != nil {
+		rh.avalonLogger.Errorf("handlers.rooms_handler.post", "%s", err.Error())
+		return
+	}
+	response, err := json.Marshal(jsend.NewJsendResponseSuccess())
+	if err != nil {
+		rh.avalonLogger.Errorf("handlers.rooms_handler.post", "%s", err.Error())
+		return
+	}
+	w.Write(response)
 }
 
 func (rh *RoomsHandler) put(w http.ResponseWriter, r *http.Request) {
@@ -59,23 +76,13 @@ func (rh *RoomsHandler) delete(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
-func (rh *RoomsHandler) createRoom(room server.Room) jsend.JsendResponse {
-	if _, ok := rh.Rooms[room.Id]; ok {
-		message := fmt.Sprintf("A room with id %d already exists.", room.Id)
-		return jsend.NewJsendResponseFailure(message)
-	}
-	rh.Rooms[room.Id] = room
-	return jsend.NewJsendResponseSuccess()
-}
-
 func (rh *RoomsHandler) getLogger() *logger.Logger {
 	return rh.avalonLogger
 }
 
-func NewRoomsHandler(logger *logger.Logger, maxNumberRooms int) *RoomsHandler {
+func NewRoomsHandler(logger *logger.Logger, avalonState *server.State) *RoomsHandler {
 	return &RoomsHandler{
 		logger,
-		make(map[int]server.Room),
-		maxNumberRooms,
+		avalonState,
 	}
 }

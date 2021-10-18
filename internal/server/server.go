@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/damontic/avalon/internal/domain/server"
 	"github.com/damontic/avalon/internal/server/handlers"
 	"github.com/damontic/avalon/internal/server/logger"
 )
@@ -19,6 +20,7 @@ type AvalonServer struct {
 	Domain               string `json:"domain"`
 	handlers             map[string]http.HandlerFunc
 	logger               *logger.Logger
+	State                *server.State `json:"state"`
 }
 
 func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, sslCert string, sslKey string, isHttpToHttpsEnabled bool, verbosity int, useUtc bool) *AvalonServer {
@@ -27,12 +29,13 @@ func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, ss
 		log.Fatalln("Could not create the AvalonServer logger.")
 	}
 
-	metricsHandler := handlers.FilterAccept(handlers.DispatchHttpMethod(
-		handlers.NewMetricsHandler(avalonLogger),
-	))
-	roomHandler := handlers.FilterAccept(handlers.DispatchHttpMethod(
-		handlers.NewRoomsHandler(avalonLogger, maxNumberRooms),
-	))
+	state := &server.State{
+		Rooms:          make(map[int]server.Room),
+		MaxNumberRooms: maxNumberRooms,
+	}
+
+	metricsHandler := handlers.DispatchHttpMethod(handlers.NewMetricsHandler(avalonLogger, state))
+	roomHandler := handlers.DispatchHttpMethod(handlers.NewRoomsHandler(avalonLogger, state))
 	decorators := [2]handlers.AvalonHandlerDecorator{handlers.AvalonHeaders, handlers.FilterAccept}
 	handlersMap := map[string]http.HandlerFunc{
 		"/metrics": metricsHandler,
@@ -56,6 +59,7 @@ func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, ss
 		Domain:               domain,
 		handlers:             handlersMap,
 		logger:               avalonLogger,
+		State:                state,
 	}
 }
 

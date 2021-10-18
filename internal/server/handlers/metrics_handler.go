@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/damontic/avalon/internal/domain/server"
 	"github.com/damontic/avalon/internal/server/jsend"
 	"github.com/damontic/avalon/internal/server/logger"
 )
 
 type MetricsHandler struct {
 	avalonLogger *logger.Logger
+	avalonState  *server.State
 }
 
 func (mh *MetricsHandler) get(w http.ResponseWriter, r *http.Request) {
@@ -40,8 +42,9 @@ func (mh *MetricsHandler) getLogger() *logger.Logger {
 	return mh.avalonLogger
 }
 
-func NewMetricsHandler(avalonLogger *logger.Logger) *MetricsHandler {
+func NewMetricsHandler(avalonLogger *logger.Logger, avalonState *server.State) *MetricsHandler {
 	return &MetricsHandler{
 		avalonLogger,
+		avalonState,
 	}
 }

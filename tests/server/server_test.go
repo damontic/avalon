@@ -10,5 +10,5 @@ func ExampleAvalonServer() {
 	server := avalon.NewAvalonServer(10, 80, false, "", "", "", false, 4, false)
 	fmt.Printf("%s", server)
 	// Output:
-	// {"port":80,"isSsl":false,"isHttpToHttpsEnabled":false,"sslCert":"","sslKey":"","domain":""}
+	// {"port":80,"isSsl":false,"isHttpToHttpsEnabled":false,"sslCert":"","sslKey":"","domain":"","state":{"rooms":{},"maxNumberRooms":10}}
 }
