@@ -26,12 +26,17 @@ func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, ss
 	if err != nil {
 		log.Fatalln("Could not create the AvalonServer logger.")
 	}
-	metricsHandler := handlers.NewMetricsHandler(avalonLogger)
-	roomHandler := handlers.NewRoomsHandler(avalonLogger, maxNumberRooms)
+
+	metricsHandler := handlers.FilterAccept(handlers.DispatchHttpMethod(
+		handlers.NewMetricsHandler(avalonLogger),
+	))
+	roomHandler := handlers.FilterAccept(handlers.DispatchHttpMethod(
+		handlers.NewRoomsHandler(avalonLogger, maxNumberRooms),
+	))
 	handlersMap := map[string]http.Handler{
-		"/metrics": handlers.DispatchHttpMethod(metricsHandler),
-		"/rooms/":  handlers.DispatchHttpMethod(roomHandler),
-		"/rooms":   handlers.DispatchHttpMethod(roomHandler),
+		"/metrics": metricsHandler,
+		"/rooms/":  roomHandler,
+		"/rooms":   roomHandler,
 	}
 	return &AvalonServer{
 		Port:                 port,

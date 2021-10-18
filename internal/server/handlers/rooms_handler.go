@@ -19,7 +19,7 @@ type RoomsHandler struct {
 	MaxNumberRooms int                 `json:"maxNumberRooms"`
 }
 
-func (rh RoomsHandler) get(w http.ResponseWriter, r *http.Request) {
+func (rh *RoomsHandler) get(w http.ResponseWriter, r *http.Request) {
 	pathAfterRooms := strings.TrimPrefix(r.URL.Path, "/rooms")
 	idString := strings.TrimPrefix(pathAfterRooms, "/")
 	if idString != "" {
@@ -47,13 +47,13 @@ func (rh *RoomsHandler) post(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
-func (rh RoomsHandler) put(w http.ResponseWriter, r *http.Request) {
+func (rh *RoomsHandler) put(w http.ResponseWriter, r *http.Request) {
 	rh.avalonLogger.Debug("handlers.rooms_handler.put", "Not implemented yet.")
 	result := jsend.NewJsendResponseFailure("Not implemented: handlers.rooms_handler.put")
 	json.NewEncoder(w).Encode(result)
 }
 
-func (rh RoomsHandler) delete(w http.ResponseWriter, r *http.Request) {
+func (rh *RoomsHandler) delete(w http.ResponseWriter, r *http.Request) {
 	rh.avalonLogger.Debug("handlers.rooms_handler.delete", "Not implemented yet.")
 	result := jsend.NewJsendResponseFailure("Not implemented: handlers.rooms_handler.delete")
 	json.NewEncoder(w).Encode(result)
@@ -66,6 +66,10 @@ func (rh *RoomsHandler) createRoom(room server.Room) jsend.JsendResponse {
 	}
 	rh.Rooms[room.Id] = room
 	return jsend.NewJsendResponseSuccess()
+}
+
+func (rh *RoomsHandler) getLogger() *logger.Logger {
+	return rh.avalonLogger
 }
 
 func NewRoomsHandler(logger *logger.Logger, maxNumberRooms int) *RoomsHandler {
