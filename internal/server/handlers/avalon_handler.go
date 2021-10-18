@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/damontic/avalon/internal/server/jsend"
 	"github.com/damontic/avalon/internal/server/logger"
 )
 
@@ -27,17 +29,29 @@ func DispatchHttpMethod(avalonHandler AvalonHandler) http.HandlerFunc {
 		case http.MethodDelete:
 			avalonHandler.delete(w, r)
 		default:
-			avalonHandler.getLogger().Warnf("handlers.DispatchHttpMethod", "Received an unexpected HTTP method: %s", r.Method)
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			message := fmt.Sprintf("Received an unexpected HTTP method: %s", r.Method)
+			avalonHandler.getLogger().Warn("handlers.DispatchHttpMethod", message)
+			result := jsend.NewJsendResponseFailure(message)
+			json.NewEncoder(w).Encode(result)
 		}
 	})
 }
 
+type AvalonHandlerDecorator func(http.HandlerFunc) http.HandlerFunc
+
 func FilterAccept(handleFunc http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("r.Header.Get: %s\n", r.Header.Get("Accept"))
 		if value := r.Header.Get("Accept"); value != "application/json" && value != "*/*" {
 			http.Error(w, http.StatusText(http.StatusUnsupportedMediaType), http.StatusUnsupportedMediaType)
 		}
+		handleFunc(w, r)
+	})
+}
+
+func AvalonHeaders(handleFunc http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		handleFunc(w, r)
 	})
 }

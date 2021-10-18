@@ -17,7 +17,7 @@ type AvalonServer struct {
 	SslCert              string `json:"sslCert"`
 	SslKey               string `json:"sslKey"`
 	Domain               string `json:"domain"`
-	handlers             map[string]http.Handler
+	handlers             map[string]http.HandlerFunc
 	logger               *logger.Logger
 }
 
@@ -33,11 +33,20 @@ func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, ss
 	roomHandler := handlers.FilterAccept(handlers.DispatchHttpMethod(
 		handlers.NewRoomsHandler(avalonLogger, maxNumberRooms),
 	))
-	handlersMap := map[string]http.Handler{
+	decorators := [2]handlers.AvalonHandlerDecorator{handlers.AvalonHeaders, handlers.FilterAccept}
+	handlersMap := map[string]http.HandlerFunc{
 		"/metrics": metricsHandler,
 		"/rooms/":  roomHandler,
 		"/rooms":   roomHandler,
 	}
+	for key, value := range handlersMap {
+		currentHandler := value
+		for _, decorator := range decorators {
+			currentHandler = decorator(currentHandler)
+		}
+		handlersMap[key] = currentHandler
+	}
+
 	return &AvalonServer{
 		Port:                 port,
 		IsSsl:                isSsl,
