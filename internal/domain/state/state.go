@@ -7,6 +7,7 @@ import (
 )
 
 type State struct {
+	Version        string            `json:"version"`
 	Rooms          map[int]room.Room `json:"rooms"`
 	MaxNumberRooms int               `json:"maxNumberRooms"`
 }

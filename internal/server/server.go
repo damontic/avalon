@@ -24,13 +24,14 @@ type AvalonServer struct {
 	State                *state.State `json:"state"`
 }
 
-func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, sslCert string, sslKey string, isHttpToHttpsEnabled bool, verbosity int, useUtc bool) *AvalonServer {
+func NewAvalonServer(version string, maxNumberRooms int, port int, isSsl bool, domain string, sslCert string, sslKey string, isHttpToHttpsEnabled bool, verbosity int, useUtc bool) *AvalonServer {
 	avalonLogger, err := logger.New(logger.VerbosityLevel(verbosity), useUtc)
 	if err != nil {
 		log.Fatalln("Could not create the AvalonServer logger.")
 	}
 
 	state := &state.State{
+		Version:        version,
 		Rooms:          make(map[int]room.Room),
 		MaxNumberRooms: maxNumberRooms,
 	}
