@@ -15,9 +15,15 @@ type MetricsHandler struct {
 }
 
 func (mh *MetricsHandler) get(w http.ResponseWriter, r *http.Request) {
-	mh.avalonLogger.Debug("handlers.metrics_handler.get", "Not implemented yet.")
-	result := jsend.NewJsendResponseFailure("Not implemented: handlers.metrics_handler.get")
-	json.NewEncoder(w).Encode(result)
+	mh.avalonLogger.Debug("handlers.metrics_handler.get", "start")
+	response := jsend.NewJsendResponseSuccessData(mh.avalonState)
+	responseJson, err := json.Marshal(response)
+	if err != nil {
+		mh.avalonLogger.Errorf("handlers.rooms_handler.post", "%s", err.Error())
+		return
+	}
+	w.Write(responseJson)
+
 }
 
 func (mh *MetricsHandler) post(w http.ResponseWriter, r *http.Request) {
