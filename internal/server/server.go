@@ -6,7 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/damontic/avalon/internal/domain/server"
+	"github.com/damontic/avalon/internal/domain/room"
+	"github.com/damontic/avalon/internal/domain/state"
 	"github.com/damontic/avalon/internal/server/handlers"
 	"github.com/damontic/avalon/internal/server/logger"
 )
@@ -20,7 +21,7 @@ type AvalonServer struct {
 	Domain               string `json:"domain"`
 	handlers             map[string]http.HandlerFunc
 	logger               *logger.Logger
-	State                *server.State `json:"state"`
+	State                *state.State `json:"state"`
 }
 
 func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, sslCert string, sslKey string, isHttpToHttpsEnabled bool, verbosity int, useUtc bool) *AvalonServer {
@@ -29,8 +30,8 @@ func NewAvalonServer(maxNumberRooms int, port int, isSsl bool, domain string, ss
 		log.Fatalln("Could not create the AvalonServer logger.")
 	}
 
-	state := &server.State{
-		Rooms:          make(map[int]server.Room),
+	state := &state.State{
+		Rooms:          make(map[int]room.Room),
 		MaxNumberRooms: maxNumberRooms,
 	}
 

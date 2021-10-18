@@ -4,26 +4,27 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/damontic/avalon/internal/domain/server"
+	"github.com/damontic/avalon/internal/domain/metrics"
+	"github.com/damontic/avalon/internal/domain/state"
 	"github.com/damontic/avalon/internal/server/jsend"
 	"github.com/damontic/avalon/internal/server/logger"
 )
 
 type MetricsHandler struct {
 	avalonLogger *logger.Logger
-	avalonState  *server.State
+	avalonState  *state.State
 }
 
 func (mh *MetricsHandler) get(w http.ResponseWriter, r *http.Request) {
 	mh.avalonLogger.Debug("handlers.metrics_handler.get", "start")
-	response := jsend.NewJsendResponseSuccessData(mh.avalonState)
+	metricsSummary := metrics.GetMetricsSummary(mh.avalonState)
+	response := jsend.NewJsendResponseSuccessData(metricsSummary)
 	responseJson, err := json.Marshal(response)
 	if err != nil {
-		mh.avalonLogger.Errorf("handlers.rooms_handler.post", "%s", err.Error())
+		mh.avalonLogger.Errorf("handlers.metrics_handler.get", "%s", err.Error())
 		return
 	}
 	w.Write(responseJson)
-
 }
 
 func (mh *MetricsHandler) post(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +49,7 @@ func (mh *MetricsHandler) getLogger() *logger.Logger {
 	return mh.avalonLogger
 }
 
-func NewMetricsHandler(avalonLogger *logger.Logger, avalonState *server.State) *MetricsHandler {
+func NewMetricsHandler(avalonLogger *logger.Logger, avalonState *state.State) *MetricsHandler {
 	return &MetricsHandler{
 		avalonLogger,
 		avalonState,

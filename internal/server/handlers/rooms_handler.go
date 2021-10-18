@@ -6,14 +6,15 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/damontic/avalon/internal/domain/server"
+	"github.com/damontic/avalon/internal/domain/room"
+	"github.com/damontic/avalon/internal/domain/state"
 	"github.com/damontic/avalon/internal/server/jsend"
 	"github.com/damontic/avalon/internal/server/logger"
 )
 
 type RoomsHandler struct {
 	avalonLogger *logger.Logger
-	avalonState  *server.State
+	avalonState  *state.State
 }
 
 func (rh *RoomsHandler) get(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +46,7 @@ func (rh *RoomsHandler) get(w http.ResponseWriter, r *http.Request) {
 func (rh *RoomsHandler) post(w http.ResponseWriter, r *http.Request) {
 	rh.avalonLogger.Debug("handlers.rooms_handler.post", "start")
 	decoder := json.NewDecoder(r.Body)
-	var room server.Room
+	var room room.Room
 	err := decoder.Decode(&room)
 	if err != nil {
 		rh.avalonLogger.Errorf("handlers.rooms_handler.post", "%s", err.Error())
@@ -80,7 +81,7 @@ func (rh *RoomsHandler) getLogger() *logger.Logger {
 	return rh.avalonLogger
 }
 
-func NewRoomsHandler(logger *logger.Logger, avalonState *server.State) *RoomsHandler {
+func NewRoomsHandler(logger *logger.Logger, avalonState *state.State) *RoomsHandler {
 	return &RoomsHandler{
 		logger,
 		avalonState,
