@@ -27,10 +27,18 @@ let MAGENTA
 let BLACK
 let WHITE
 
-function preload() {
-    FONT_INCONSOLATA = loadFont('fonts/InconsolataN-Regular.otf')
+let rooms
 
-    IMAGE_TITLE = loadImage("images/text/title.png")
+function preload() {
+    let url = 'http://localhost:8080/rooms'
+    httpGet(url, "json", function(response) {
+        // when the HTTP request completes, populate the variable that holds the
+        // earthquake data used in the visualization.
+        rooms = response["data"]
+    })
+    console.log(`Rooms: ${JSON.stringify(rooms)}`)
+
+    FONT_INCONSOLATA = loadFont('fonts/InconsolataN-Regular.otf')
     IMAGE_CHARACTER_CARD_BACK = loadImage("images/character_back.png")
     IMAGE_ASSASSIN = loadImage("images/character_assassin.png")
     IMAGE_MERLIN = loadImage("images/character_merlin.png")
@@ -57,18 +65,14 @@ function preload() {
 }
 
 function setup() {
-    let appDisplayWidth = displayWidth * 80 / 100
-    let appDisplayHeight = displayHeight * 80 / 100
-    createCanvas(appDisplayWidth, appDisplayHeight, WEBGL)
+    let appDisplayWidth = 150
+    let appDisplayHeight = 600
+    createCanvas(displayWidth, displayHeight, WEBGL)
     ortho()
     angleMode(RADIANS)
     rectMode(CORNER)
     textAlign(LEFT, TOP)
-    avalon = new Avalon(
-        appDisplayWidth,
-        appDisplayHeight,
-        getURLParams()
-    )
+    avalon = new Avalon(displayWidth, displayHeight)
 }
 
 function draw() {
@@ -76,20 +80,20 @@ function draw() {
 }
 
 function mouseClicked() {
-    console.log("Mouse Clicked")
     avalon.merlin_card.checkBeingClicked()
     avalon.morgana_card.checkBeingClicked()
+
+    console.log(`Mouse: ${mouseX} ${mouseY}`)
+    console.log(`Merlin: ${avalon.merlin_card.toString()}`)
+    console.log(`Morgana: ${avalon.morgana_card.toString()}`)
+    console.log(`Rooms: ${JSON.stringify(rooms)}`)
 }
 
 function mousePressed() {
-    console.log("Mouse Pressed")
-    console.log(`${mouseX} ${mouseY} ${avalon.menu.createRoomButton.bbox.x} ${avalon.menu.createRoomButton.bbox.y}`)
 }
 
 function mouseDragged() {
-    console.log("Mouse Dragged")
-  }
+}
 
-  function mouseReleased() {
-    console.log("Mouse Released")
-  }
+function mouseReleased() {
+}

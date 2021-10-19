@@ -1,6 +1,0 @@
-class AvalonTeamDiscussion {
-    constructor() {
-    }
-    draw() {
-    }
-}

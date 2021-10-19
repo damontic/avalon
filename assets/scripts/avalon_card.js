@@ -45,14 +45,23 @@ class AvalonCard {
         pop()
     }
     checkBeingClicked() {
-        console.log("Checking Merlin clicked")
-        let x0 = this.x - this.imageToDraw.width
-        let y0 = this.y - this.imageToDraw.height
+        console.debug("Checking Card clicked")
+        let x0 = this.x
+        let y0 = this.y
         let x1 = this.x + this.imageToDraw.width
         let y1 = this.y + this.imageToDraw.height
 
         if ( mouseX > x0 && mouseX < x1 && mouseY > y0 && mouseY < y1) {
             this.rotate()
         }
+    }
+    toString() {
+        let s = {
+            "x0":this.x,
+            "x1":this.x + this.imageToDraw.width,
+            "y0":this.y,
+            "y1":this.y + this.imageToDraw.height,
+        }
+        return JSON.stringify(s)
     }
 }

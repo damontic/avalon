@@ -1,6 +1,0 @@
-class AvalonQuest {
-    constructor() {
-    }
-    draw() {
-    }
-}
