@@ -1,3 +1,5 @@
+let WINDOW_PERCENT = 0.8
+
 let avalon
 
 let FONT_INCONSOLATA
@@ -65,19 +67,43 @@ function preload() {
 }
 
 function setup() {
-    let appDisplayWidth = 150
-    let appDisplayHeight = 600
-    createCanvas(displayWidth, displayHeight, WEBGL)
+    APP_WIDTH = windowWidth * WINDOW_PERCENT
+    APP_HEIGHT = windowHeight * WINDOW_PERCENT
+    createCanvas(windowWidth * WINDOW_PERCENT, windowHeight * WINDOW_PERCENT, WEBGL)
     ortho()
     angleMode(RADIANS)
     rectMode(CORNER)
     textAlign(LEFT, TOP)
-    avalon = new Avalon(displayWidth, displayHeight)
+    avalon = new Avalon(windowWidth, APP_HEIGHT)
+
+    let p = createP('Nickname');
+    p.style('font-size', '16px');
+    p.position(0, 300);
+
+    let inp = createInput('');
+    inp.position(20, 0);
+    inp.size(100);
+    inp.input(myInputEvent)
+
+    sel = createSelect();
+    sel.position(30, 0);
+    sel.option('Room 1');
+    sel.option('Room 2');
+    sel.option('Room 3');
+    sel.changed(mySelectEvent);
+
+    button = createButton('Join Room');
+    button.position(50, 0);
+    button.mousePressed(buttonClicked);
 }
 
 function draw() {
     avalon.draw()
 }
+
+function windowResized() {
+    resizeCanvas(windowWidth * WINDOW_PERCENT, windowHeight * WINDOW_PERCENT);
+  }
 
 function mouseClicked() {
     avalon.merlin_card.checkBeingClicked()
@@ -96,4 +122,18 @@ function mouseDragged() {
 }
 
 function mouseReleased() {
+}
+
+function myInputEvent() {
+    console.log('you are typing: ', this.value());
+}
+
+function mySelectEvent() {
+    let item = sel.value();
+    background(200);
+    text('It is a ' + item + '!', 50, 50);
+}
+
+function buttonClicked() {
+    console.log("Button Clicked...")
 }
