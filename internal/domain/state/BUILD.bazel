@@ -1,0 +1,9 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "state",
+    srcs = ["state.go"],
+    importpath = "github.com/damontic/avalon/internal/domain/state",
+    visibility = ["//:__subpackages__"],
+    deps = ["//internal/domain/room"],
+)

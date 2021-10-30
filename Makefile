@@ -1,24 +1,22 @@
 SHELL=/bin/bash
-.PHONY: all help run build test version prerelease patch minor major clean
+.PHONY: all help run version build test clean
 
 all: build
 
 help:
-	go run main.go -h
+	bazel run //:avalon -- -h
 
 run:
-	go run main.go -port 8080 -verbosity vvvvvv
+	bazel run //:avalon -- -port 8080 -verbosity vvvvvv
 
 version:
-	go run main.go -version
+	bazel run //:avalon -- -version
 
 build:
-	go build -o avalon
-	tar czf avalon.tar.gz avalon html server
+	bazel build //:avalon_package
 
 test:
-	go test github.com/damontic/avalon/tests/server
-	go test github.com/damontic/avalon/tests/server/handlers
+	bazel test //tests/server:server_test //tests/server/handlers:handlers_test
 
 clean:
-	rm avalon.tar.gz avalon
+	bazel clean --expunge

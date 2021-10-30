@@ -1,0 +1,19 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "handlers",
+    srcs = [
+        "avalon_handler.go",
+        "metrics_handler.go",
+        "rooms_handler.go",
+    ],
+    importpath = "github.com/damontic/avalon/internal/server/handlers",
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//internal/domain/metrics",
+        "//internal/domain/room",
+        "//internal/domain/state",
+        "//internal/server/jsend",
+        "//internal/server/logger",
+    ],
+)

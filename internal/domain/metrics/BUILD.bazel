@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "metrics",
+    srcs = ["metrics.go"],
+    importpath = "github.com/damontic/avalon/internal/domain/metrics",
+    visibility = ["//:__subpackages__"],
+    deps = [
+        "//internal/domain/room",
+        "//internal/domain/state",
+    ],
+)

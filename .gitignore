@@ -1,3 +1,14 @@
-avalon.tar.gz
-letsencrypt.tar.gz
-/avalon
+# ignore everything (dirs, files, sub-dirs, sub-files)
+/*
+# but do not ignore
+!.gitignore
+!.pre-commit-config.yaml
+!.bazelversion
+!/assets
+!/docs
+!/internal
+!/tests
+!/**.go
+!/go.mod
+!/WORKSPACE.bazel
+!/BUILD.bazel
